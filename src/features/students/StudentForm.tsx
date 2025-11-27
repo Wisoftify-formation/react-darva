@@ -17,7 +17,7 @@ type StudentFormData = z.infer<typeof studentSchema>;
 
 export const StudentForm = ({onSubmit, student}: StudentFormProps) => {
   const [loading, setLoading] = useState(false);
-  const {register, handleSubmit, formState: {errors}} = useForm<StudentFormData>({
+  const {register, handleSubmit, reset, formState: {errors}} = useForm<StudentFormData>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
       name: student?.name || '',
@@ -34,6 +34,7 @@ export const StudentForm = ({onSubmit, student}: StudentFormProps) => {
       surname
     });
     setLoading(false);
+    reset();
   }
 
   return (

@@ -3,6 +3,7 @@ import { StudentList } from './features/students/StudentsList';
 import { StudentForm } from './features/students/StudentForm';
 import { useStudents } from './hooks/useStudents';
 import { useInterval } from './hooks/useInterval';
+import { useAuth } from './stores/auth.context.tsx';
 
 const App = () => {
   const {
@@ -17,7 +18,7 @@ const App = () => {
 
   return (
     <div className="container p-4">
-      
+
       <button onClick={() => console.log(useStudents)}>x</button>
       <p>{date.toISOString()}</p>
       <input type="number" value={ms} onChange={(e) => setMs(Number(e.target.value))} />
