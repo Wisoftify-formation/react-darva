@@ -1,5 +1,5 @@
 import type { Student } from "../types";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 export const useStudents = () => {
   const [students, setStudents] = useState<Student[]>([{
@@ -8,23 +8,28 @@ export const useStudents = () => {
     surname: 'Doe'
   }]);
 
-  const handleSubmit = async (student: Student) => {
-    setStudents([...students, student])
-  }
+  const handleSubmit = useCallback(async (student: Student) => {
+    setStudents(prev => [...prev, student]);
+  }, []);
 
-  const handleDelete = async (student: Student) => {
-    setStudents(students.filter(s => s.id !== student.id))
-  }
+  const handleDelete = useCallback(async (student: Student) => {
+    setStudents(prev => prev.filter(s => s.id !== student.id))
+  }, []);
 
-  const handleEdit = async (student: Student) => {
-    setStudents(students.map(i => i.id === student.id ? student : i))
-  }
+  const handleEdit = useCallback(async (student: Student) => {
+    setStudents(prev => prev.map(i => i.id === student.id ? student : i))
+  }, []);
+
+  const reset = useCallback(() => {
+    setStudents([]);
+  }, []);
 
   return ({
     students, 
     handleSubmit,
     handleDelete,
-    handleEdit
+    handleEdit,
+    reset
   })
 }
 

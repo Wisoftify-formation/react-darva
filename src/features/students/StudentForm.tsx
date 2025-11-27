@@ -1,59 +1,43 @@
 import { useState } from 'react';
 import type { Student } from '../../types';
+import {z, ZodType} from "zod";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 type StudentFormProps = {
   onSubmit: (student: Student) => Promise<void>,
   student?: Student
 }
 
-type StudentFormError = {
-  name: string | null;
-  surname: string | null;
-}
+const studentSchema = z.object({
+  name: z.string().min(1, {message: "Le nom est requis"}),
+  surname: z.string().min(1, {message: "Le prénom est requis"})
+});
+type StudentFormData = z.infer<typeof studentSchema>;
 
 export const StudentForm = ({onSubmit, student}: StudentFormProps) => {
-  const [name, setName] = useState(student?.name || '');
-  const [surname, setSurname] = useState(student?.surname || '');
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<StudentFormError>({
-    name: null,
-    surname: null,
-  });
+  const {register, handleSubmit, formState: {errors}} = useForm<StudentFormData>({
+    resolver: zodResolver(studentSchema),
+    defaultValues: {
+      name: student?.name || '',
+      surname: student?.surname || ''
+    },
+  })
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const _handleSubmit = async ({name, surname}: StudentFormData) => {
     if (loading) return;
     setLoading(true);
-
-    let _errors: StudentFormError = {
-      name: null,
-      surname: null,
-    };
-
-    if (!name) _errors = {..._errors, name: 'Name is required'};
-    if (!surname) _errors = {..._errors, surname: 'Surname is required'};
-    
-    setErrors(_errors);
-    if (Object.values(_errors).some(e => e !== null)) {
-      setLoading(false);
-      return;
-    };
-
-    setErrors({name: null, surname: null});
-
     await onSubmit({
       id: student?.id ?? Math.floor(Math.random() * 1000000),
       name,
       surname
     });
-
-    setName('');
-    setSurname('');
     setLoading(false);
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto space-y-6 p-6 bg-white rounded-lg shadow-md">
+    <form onSubmit={handleSubmit(_handleSubmit)} className="w-full max-w-md mx-auto space-y-6 p-6 bg-white rounded-lg shadow-md">
       <div className="space-y-2">
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">
           Name
@@ -61,12 +45,11 @@ export const StudentForm = ({onSubmit, student}: StudentFormProps) => {
         <input
           id="name"
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          {...register('name')}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
         />
         {errors.name ? (
-          <span className="block text-sm text-red-600 mt-1">{errors.name}</span>
+          <span className="block text-sm text-red-600 mt-1">{errors.name.message}</span>
         ) : null}
       </div>
       <div className="space-y-2">
@@ -76,12 +59,11 @@ export const StudentForm = ({onSubmit, student}: StudentFormProps) => {
         <input
           id="surname"
           type="text"
-          value={surname}
-          onChange={(e) => setSurname(e.target.value)}
+          {...register('surname')}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
         />
         {errors.surname ? (
-          <span className="block text-sm text-red-600 mt-1">{errors.surname}</span>
+          <span className="block text-sm text-red-600 mt-1">{errors.surname.message}</span>
         ) : null}
       </div>
       <button

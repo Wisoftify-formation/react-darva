@@ -6,7 +6,6 @@ export const useInterval = (ms: number) : Date => {
   useEffect(() => {
     const id = setInterval(() => {
       setDate(new Date());
-      console.log(new Date());
     }, ms);
 
     return () => clearInterval(id);

@@ -1,5 +1,6 @@
 import type { Student } from '../../types';
 import { StudentListItem } from './StudentListItem';
+import { useMemo } from 'react';
 
 type StudentListProps = {
   students: Student[],
@@ -9,10 +10,11 @@ type StudentListProps = {
 
 export const StudentList = (props: StudentListProps) => {
   const { students, onDelete, onEdit } = props;
+  const _students = useMemo(() => students.sort((a, b) => a.name.localeCompare(b.name)), [students]);
 
   return (
     <div>
-      {students.map((student) => (
+      {_students.map((student) => (
         <StudentListItem
           key={student.id}
           student={student}

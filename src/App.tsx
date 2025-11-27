@@ -18,6 +18,7 @@ const App = () => {
   return (
     <div className="container p-4">
       
+      <button onClick={() => console.log(useStudents)}>x</button>
       <p>{date.toISOString()}</p>
       <input type="number" value={ms} onChange={(e) => setMs(Number(e.target.value))} />
 
