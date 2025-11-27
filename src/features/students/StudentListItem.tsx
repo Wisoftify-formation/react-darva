@@ -2,6 +2,7 @@ import type { Student } from '../../types';
 import { useState } from 'react';
 import { Modal } from '../../components/Modal';
 import { StudentForm } from './StudentForm';
+import { Link } from 'react-router-dom';
 
 type StudentListItemProps = {
   student: Student,
@@ -51,6 +52,8 @@ export const StudentListItem = (props: StudentListItemProps) => {
           <StudentForm onSubmit={handleEdit} student={student} />
         </Modal>
       : null}
+
+      <Link to={`/students/${student.id}`} className="text-blue-500 hover:text-blue-600">View</Link>
     </div>
   )
 }
