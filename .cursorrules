@@ -1,0 +1,80 @@
+Tu génères du code pour un projet React + TypeScript avec Tailwind CSS v4. Respecte STRICTEMENT les règles suivantes :
+
+[Contexte général]
+- Utilise toujours React moderne (hooks, composants fonctionnels).
+- Le langage est TypeScript, jamais JavaScript.
+- Le style passe exclusivement par Tailwind CSS v4 via la prop className.
+
+[TypeScript]
+- Utilise toujours `type` au lieu de `interface` pour déclarer des types personnalisés, sauf si tu dois étendre un type externe existant.
+- Évite au maximum `any`. Préfère les types précis, `unknown`, les génériques ou les unions.
+- Typage explicite dès que c’est utile (props, retours de fonctions, valeurs retournées par des hooks, etc.).
+
+[Composants React]
+- Déclare TOUS les composants en fonctions fléchées :
+  - ✅ `const MyComponent = (props: Props) => { ... }`
+  - ⛔ `function MyComponent(props: Props) { ... }`
+- Ne tape JAMAIS les props directement dans la signature des arguments.
+  - ⛔ `const MyComponent = ({ foo }: { foo: string }) => { ... }`
+  - ✅ `type Props = { foo: string }` puis `const MyComponent = (props: Props) => { ... }`
+- Quand c’est pertinent, utilise `ComponentProps` de React pour typer les props au lieu de recréer des types à la main.
+  - ✅ `type ButtonProps = React.ComponentProps<'button'> & { variant?: 'primary' | 'secondary' }`
+  - ✅ `const Button = (props: ButtonProps) => { ... }`
+- Préfère les exports nommés (`export const MyComponent = ...`) sauf si une convention contraire est déjà en place.
+- N'utilise jamais && et || pour les conditions dans le rendu. Préfère les ternaire (?)
+
+[Utilisation de ComponentProps]
+- Pour un composant wrapper d’élément HTML, tape les props avec `ComponentProps` :
+  - `type InputProps = React.ComponentProps<'input'> & { label?: string }`
+- Pour un composant qui wrappe un autre composant React :
+  - `type LinkButtonProps = React.ComponentProps<typeof Link> & { icon?: ReactNode }`
+- Dans tous les cas, crée un alias de type, puis utilise ce type pour la signature de la fonction fléchée.
+
+[Hooks & logique React – Éviter useEffect]
+- Évite à TOUT PRIX `useEffect`. Ce hook ne doit être utilisé qu’en DERNIER RECOURS.
+- Avant de proposer un `useEffect`, essaie systématiquement :
+  - De dériver la valeur directement via le rendu ou des fonctions pures.
+  - D’utiliser des handlers d’événements (onClick, onChange, etc.) plutôt qu’un effet.
+  - D’utiliser `useMemo` ou `useCallback` pour des calculs et des fonctions dérivées.
+  - De remonter l’état dans un parent au lieu de synchroniser des états doublons.
+- Si vraiment `useEffect` est nécessaire (par ex. intégration avec une API externe ou effet impératif inévitable), fais un effet :
+  - Le plus petit possible, avec toutes les dépendances correctement déclarées.
+  - Sans logique complexe (extraire dans des fonctions pures ou des hooks personnalisés).
+
+[Tailwind CSS v4]
+- Utilise toujours la prop `className` avec des utilitaires Tailwind, jamais `style` inline sauf cas très particuliers.
+- Organise les classes Tailwind de façon lisible :
+  - Regroupe par rôle : layout, spacing, typo, couleur, effets, responsive.
+- Évite de dupliquer de longues listes de classes : crée des composants réutilisables quand une même structure revient.
+- Quand tu ajoutes une nouvelle structure visuelle récurrente, privilégie un composant dédié plutôt que de répéter les mêmes classes partout.
+
+[Structure & qualité du code]
+- Préfère des petits composants focalisés sur une seule responsabilité.
+- Nomme les composants, fonctions et variables de façon claire et intentionnelle.
+- Extrais la logique non liée au rendu dans :
+  - des fonctions utilitaires pures (hors React), ou
+  - des hooks personnalisés (`useSomething`) si la logique est liée aux hooks.
+- Respecte les conventions TypeScript strictes (pas de casts inutiles, pas de `as unknown as` agressifs).
+- Garde un code cohérent et lisible : indentation standard, destructuration utile, pas d’abréviations obscures.
+
+[Exemples de patterns attendus]
+
+1) Composant simple avec types dédiés :
+- `type Props = { label: string; onClick: () => void }`
+- `export const MyButton = (props: Props) => { ... }`
+
+2) Composant wrapper d’élément HTML :
+- `type ButtonProps = React.ComponentProps<'button'> & { variant?: 'primary' | 'secondary' }`
+- `export const Button = ({ className, ...props }: ButtonProps) => ( <button className={/* classes tailwind + className */} {...props} /> )`
+
+3) Logique dérivée SANS useEffect :
+- Préfère calculer les valeurs dérivées dans le corps du composant ou via `useMemo`
+  plutôt que de synchroniser de l’état via `useEffect`.
+
+En résumé :
+- React + TypeScript strict.
+- `type` plutôt que `interface`.
+- `ComponentProps` pour typer les props quand c’est pertinent.
+- Composants en fonctions fléchées uniquement.
+- `useEffect` seulement en dernier recours.
+- Tailwind v4 via `className` pour tout le style.
