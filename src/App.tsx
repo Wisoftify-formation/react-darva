@@ -1,30 +1,26 @@
 import { useState } from 'react';
-import type { Student } from './types';
 import { StudentList } from './features/students/StudentsList';
 import { StudentForm } from './features/students/StudentForm';
+import { useStudents } from './hooks/useStudents';
+import { useInterval } from './hooks/useInterval';
 
 const App = () => {
-  const [students, setStudents] = useState<Student[]>([{
-    id: 1,
-    name: 'John',
-    surname: 'Doe'
-  }]);
+  const {
+    students,
+    handleSubmit,
+    handleDelete,
+    handleEdit
+  } = useStudents();
 
-
-  const handleSubmit = async (student: Student) => {
-    setStudents([...students, student])
-  }
-
-  const handleDelete = async (student: Student) => {
-    setStudents(students.filter(s => s.id !== student.id))
-  }
-
-  const handleEdit = async (student: Student) => {
-    setStudents(students.map(i => i.id === student.id ? student : i))
-  }
+  const [ms, setMs] = useState(1000);
+  const date = useInterval(ms);
 
   return (
     <div className="container p-4">
+      
+      <p>{date.toISOString()}</p>
+      <input type="number" value={ms} onChange={(e) => setMs(Number(e.target.value))} />
+
       <h1 className="text-2xl font-bold mb-4">Students</h1>
       <StudentForm onSubmit={handleSubmit} />
       <StudentList
