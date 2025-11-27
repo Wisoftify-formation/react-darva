@@ -1,16 +1,18 @@
 import { createContext, useContext, useState } from "react";
 import type { Student } from "../types";
+import {useLocalStorage} from 'usehooks-ts';
 
 const StudentsContext = createContext<[
   Student[],
-  React.Dispatch<React.SetStateAction<Student[]>>
-]>([[], () => {}]);
+  React.Dispatch<React.SetStateAction<Student[]>>,
+  () => void
+]>([[], () => {}, () => {}]);
 
 export const StudentsProvider = ({ children }: { children: React.ReactNode }) => {
-  const [students, setStudents] = useState<Student[]>([]);
+  const [students, setStudents, remove] = useLocalStorage<Student[]>('students-key', [])
 
   return (
-    <StudentsContext.Provider value={[students, setStudents]}>
+    <StudentsContext.Provider value={[students, setStudents, remove]}>
       {children}
     </StudentsContext.Provider>
   )
