@@ -3,6 +3,7 @@ import { StudentList } from '../features/students/StudentsList';
 import { StudentForm } from '../features/students/StudentForm';
 import { useStudents } from '../hooks/useStudents';
 import { useInterval } from '../hooks/useInterval';
+import { ErrorBoundary } from 'react-error-boundary';
 
 const Home = () => {
   const {
@@ -17,8 +18,7 @@ const Home = () => {
 
   return (
     <div className="container p-4">
-
-      <button onClick={() => console.log(useStudents)}>x</button>
+      <button onClick={() => {throw new Error('test')}}>x</button>
       <p>{date.toISOString()}</p>
       <input type="number" value={ms} onChange={(e) => setMs(Number(e.target.value))} />
 
